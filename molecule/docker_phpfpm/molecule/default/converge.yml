@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+
+  tasks:
+    - name: "Include acme.docker_phpfpm"
+      include_role:
+        name: "acme.docker_phpfpm"

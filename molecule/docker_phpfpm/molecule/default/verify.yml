@@ -1,0 +1,33 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Example assertion
+      assert:
+        that: true
+
+    - name: Check nginx binary
+      stat:
+        path: "/usr/sbin/nginx"
+      register: this
+      failed_when: "not this.stat.exists"
+
+  verifier:
+    name: testinfra
+    enabled: False
+    
+    options:
+      n: 1
+    env:
+      FOO: bar
+    lint:
+      name: flake8
+    options:
+      benchmark: True
+    enabled: False
+    env: 
+      FOO: bar

@@ -1,0 +1,8 @@
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check nginx binary
+      stat: 
+        path: "/usr/sbin/nginx"
+      register: this
+      failed_when: "not this.stat.exists"
