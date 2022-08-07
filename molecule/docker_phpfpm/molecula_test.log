@@ -1,0 +1,134 @@
+
+PLAY [Destroy] *****************************************************************
+
+TASK [Destroy molecule instance(s)] ********************************************
+[33mchanged: [localhost] => (item=instance)[0m
+
+TASK [Wait for instance(s) deletion to complete] *******************************
+[1;30mFAILED - RETRYING: [localhost]: Wait for instance(s) deletion to complete (300 retries left).[0m
+[32mok: [localhost] => (item=instance)[0m
+
+TASK [Delete docker networks(s)] ***********************************************
+
+PLAY RECAP *********************************************************************
+[33mlocalhost[0m                  : [32mok=2   [0m [33mchanged=1   [0m unreachable=0    failed=0    [36mskipped=1   [0m rescued=0    ignored=0
+
+
+playbook: /home/ddenk/skillbox/docker-phpfpm-nginx/molecule/docker_phpfpm/molecule/default/converge.yml
+
+PLAY [Create] ******************************************************************
+
+TASK [Log into a Docker registry] **********************************************
+[36mskipping: [localhost] => (item=None) [0m
+[36mskipping: [localhost][0m
+
+TASK [Check presence of custom Dockerfiles] ************************************
+[32mok: [localhost] => (item={'image': 'quay.io/centos/centos:stream8', 'name': 'instance', 'pre_build_image': True})[0m
+
+TASK [Create Dockerfiles from image names] *************************************
+[36mskipping: [localhost] => (item={'image': 'quay.io/centos/centos:stream8', 'name': 'instance', 'pre_build_image': True}) [0m
+
+TASK [Discover local Docker images] ********************************************
+[32mok: [localhost] => (item={'changed': False, 'skipped': True, 'skip_reason': 'Conditional result was False', 'item': {'image': 'quay.io/centos/centos:stream8', 'name': 'instance', 'pre_build_image': True}, 'ansible_loop_var': 'item', 'i': 0, 'ansible_index_var': 'i'})[0m
+
+TASK [Build an Ansible compatible image (new)] *********************************
+[36mskipping: [localhost] => (item=molecule_local/quay.io/centos/centos:stream8) [0m
+
+TASK [Create docker network(s)] ************************************************
+
+TASK [Determine the CMD directives] ********************************************
+[32mok: [localhost] => (item={'image': 'quay.io/centos/centos:stream8', 'name': 'instance', 'pre_build_image': True})[0m
+
+TASK [Create molecule instance(s)] *********************************************
+[33mchanged: [localhost] => (item=instance)[0m
+
+TASK [Wait for instance(s) creation to complete] *******************************
+[1;30mFAILED - RETRYING: [localhost]: Wait for instance(s) creation to complete (300 retries left).[0m
+[33mchanged: [localhost] => (item={'failed': 0, 'started': 1, 'finished': 0, 'ansible_job_id': '457332408775.942749', 'results_file': '/home/ddenk/.ansible_async/457332408775.942749', 'changed': True, 'item': {'image': 'quay.io/centos/centos:stream8', 'name': 'instance', 'pre_build_image': True}, 'ansible_loop_var': 'item'})[0m
+
+PLAY RECAP *********************************************************************
+[33mlocalhost[0m                  : [32mok=5   [0m [33mchanged=2   [0m unreachable=0    failed=0    [36mskipped=4   [0m rescued=0    ignored=0
+
+
+PLAY [Converge] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[32mok: [instance][0m
+
+TASK [Include acme.docker_phpfpm] **********************************************
+
+TASK [acme.docker_phpfpm : Ensure nginx installed] *****************************
+[33mchanged: [instance][0m
+
+PLAY RECAP *********************************************************************
+[33minstance[0m                   : [32mok=2   [0m [33mchanged=1   [0m unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+PLAY [Converge] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[32mok: [instance][0m
+
+TASK [Include acme.docker_phpfpm] **********************************************
+
+TASK [acme.docker_phpfpm : Ensure nginx installed] *****************************
+[32mok: [instance][0m
+
+PLAY RECAP *********************************************************************
+[32minstance[0m                   : [32mok=2   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+============================= test session starts ==============================
+platform linux -- Python 3.8.10, pytest-7.1.2, pluggy-1.0.0
+rootdir: /home/ddenk
+plugins: testinfra-6.8.0
+collected 2 items
+
+molecule/default/tests/test_default.py FF                                [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_os_release[ansible://instance] ______________________
+
+host = <testinfra.host.Host ansible://instance>
+
+    def test_os_release(host):
+>       assert host.file("/etc/os-release").contains("Alpine Linux")
+E       AssertionError: assert False
+E        +  where False = <bound method File.contains of <file /etc/os-release>>('Alpine Linux')
+E        +    where <bound method File.contains of <file /etc/os-release>> = <file /etc/os-release>.contains
+E        +      where <file /etc/os-release> = <class 'abc.GNUFile'>('/etc/os-release')
+E        +        where <class 'abc.GNUFile'> = <testinfra.host.Host ansible://instance>.file
+
+molecule/default/tests/test_default.py:6: AssertionError
+_________________ test_nginx_is_installed[ansible://instance] __________________
+
+host = <testinfra.host.Host ansible://instance>
+
+    def test_nginx_is_installed(host):
+        nginx = host.package("nginx")
+        assert nginx.is_installed
+>       assert nginx.version.startswith("1.16.1")
+E       AssertionError: assert False
+E        +  where False = <built-in method startswith of str object at 0x7f8e56e76cf0>('1.16.1')
+E        +    where <built-in method startswith of str object at 0x7f8e56e76cf0> = '1.14.1'.startswith
+E        +      where '1.14.1' = <package nginx>.version
+
+molecule/default/tests/test_default.py:11: AssertionError
+=========================== short test summary info ============================
+FAILED molecule/default/tests/test_default.py::test_os_release[ansible:/instance]
+FAILED molecule/default/tests/test_default.py::test_nginx_is_installed[ansible:/instance]
+============================== 2 failed in 1.74s ===============================
+
+PLAY [Destroy] *****************************************************************
+
+TASK [Destroy molecule instance(s)] ********************************************
+[33mchanged: [localhost] => (item=instance)[0m
+
+TASK [Wait for instance(s) deletion to complete] *******************************
+[1;30mFAILED - RETRYING: [localhost]: Wait for instance(s) deletion to complete (300 retries left).[0m
+[33mchanged: [localhost] => (item=instance)[0m
+
+TASK [Delete docker networks(s)] ***********************************************
+
+PLAY RECAP *********************************************************************
+[33mlocalhost[0m                  : [32mok=2   [0m [33mchanged=2   [0m unreachable=0    failed=0    [36mskipped=1   [0m rescued=0    ignored=0
+
